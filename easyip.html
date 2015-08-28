@@ -1,0 +1,81 @@
+<script type="text/javascript">
+    RED.nodes.registerType('easyip in', {
+        category: 'function',
+        color: '#ffff00',
+        inputs: 1,
+        outputs: 1,
+        icon: "arrow-in.png",
+        defaults: {
+            name : {value: ''}
+        },
+        label: function () {
+            return this.name || 'easyip request';
+        },
+        paletteLabel: 'easyip request'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip in">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip in">
+   <p>Parses a buffer from for example a UDP node into a EasyIP Packet object instance</p>
+   <p>If you are parsing a request from a real device you must provide a response as well
+    otherwise it will cause a timeout error in the requesting device</p>
+   <p>The resulting message just modifies payload.
+        <ul>
+            <li><code>payload.flags</code></li>
+            <li><code>payload.error</code></li>
+            <li><code>payload.counter</code> : a packet counter, should reply with same number as requested</li>
+            <li><code>payload.index1</code></li>
+            <li><code>payload.sendType</code> : A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload the request has</li>
+            <li><code>payload.sendSize</code> : number of words or strings to expect in payload</li>
+            <li><code>payload.sendOffset</code></li>
+            <li><code>payload.reqType</code> : A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' that should be sent in the response</li>
+            <li><code>payload.reqSize</code></li>
+            <li><code>payload.reqOffsetServer</code></li>
+            <li><code>payload.reqOffsetClient</code></li>
+        </ul>
+   </p>
+   
+</script>
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('easyip out', {
+        category: 'function',
+        color: '#ffff00',
+        inputs: 1,
+        outputs: 1,
+        icon: "arrow-in.png",
+        align: 'right',
+        defaults: {
+            name : {value: ''}
+        },
+        label: function () {
+            return this.name || 'easyip response';
+        },
+        paletteLabel: 'easyip response'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip out">
+   <p>Expects a EasyIP Packet instance as <b>msg.payload</b></p>
+   <p>Outputs an object called <b>msg</b> containing <b>msg.topic</b> and
+   <b>msg.payload</b>. msg.payload is a Buffer</p>
+</script>
