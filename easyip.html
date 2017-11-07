@@ -1,3 +1,27 @@
+<!--Common JS functions -->
+<script type="text/javascript">
+    function numberIfExist(min) {
+        min = min || 0;
+        return function (v) {
+            if (v === null) {
+                return true;
+            }
+            if (typeof v === 'string') {
+                if (v.length === 0) return true;
+                v = parseInt(v);
+            }
+            
+            if(typeof v === 'number' && !isNaN(v)) {
+                if (v >= min) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+</script>
+
+
 <script type="text/javascript">
     RED.nodes.registerType('easyip-from', {
         category: 'function',
@@ -297,26 +321,6 @@
 
 
 <script type="text/javascript">
-
-    function numberIfExist(min) {
-        min = min || 0;
-        return function (v) {
-            if (v === null) {
-                return true;
-            }
-            if (typeof v === 'string') {
-                if (v.length === 0) return true;
-                v = parseInt(v);
-            }
-            
-            if(typeof v === 'number' && !isNaN(v)) {
-                if (v >= min) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
     RED.nodes.registerType('easyip-request', {
         category: 'function',
         color: '#F3B567',
@@ -402,3 +406,88 @@
    </p>
    
 </script>
+
+
+<!-- SEND -->
+<script type="text/javascript">
+    RED.nodes.registerType('easyip-send', {
+        category: 'output',
+        color: '#F3B567',
+        inputs: 1,
+        icon: "trigger.png",
+        align: 'right',
+        defaults: {
+            name : {value: ''},
+            server: {value: '', type: 'easyip-server'},
+            addr: {value: ''},
+            operand: {value: ''},
+            offset: {value: '', validate: numberIfExist()},
+            size: {value: '', validate: numberIfExist(1)},
+            localOffset: {value: '', validate:numberIfExist()}
+        },
+        label: function () {
+            return this.name || 'easyip send';
+        },
+        paletteLabel: 'easyip send'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="easyip-send">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i>Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-addr"><i class="icon-tag"></i> Address</label>
+        <input type="text" id="node-input-addr" placeholder="IP Address">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-operand"><i class="icon-tag"></i> Operand</label>
+        <select id="node-input-operand">
+            <option value="">Optional operand</option>
+            <option value="FLAGWORD">FLAGWORD</option>
+            <option value="INPUTWORD">INPUTWORD</option>
+            <option value="OUTPUTWORD">OUTPUTWORD</option>
+            <option value="REGISTER">REGISTER</option>
+            <option value="STRING">STRING</option>
+        </select>
+        
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-offset"><i class="icon-tag"></i> Offset</label>
+        <input type="text" id="node-input-offset" placeholder="Number">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-size"><i class="icon-tag"></i> Size</label>
+        <input type="text" id="node-input-size" placeholder="Number">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-localOffset"><i class="icon-tag"></i> Local offset</label>
+        <input type="text" id="node-input-localOffset" placeholder="Number">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="easyip-send">
+    <p>Sends data from local virtual device to remote.</p>
+    <p>
+        <strong>Note:</strong> statically configured values have precedence.
+ 
+        <ul>
+             <li><code>msg.addr</code>IP Address to the remote device</li>
+             <li><code>msg.operand</code>A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload the request has</li>
+             <li><code>msg.offset</code>The offset on remote where to start</li>
+             <li><code>msg.size</code>Number of records to retreive</li>
+             <li><code>msg.localOffset</code>Local offset index</li>
+         </ul>
+    </p>
+    
+ </script>

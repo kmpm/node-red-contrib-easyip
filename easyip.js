@@ -192,4 +192,58 @@ module.exports = function (RED) {
   RED.nodes.registerType('easyip-request', EasyIPrequest);
   debug('registered `easyip-request`');
 
+
+  function EasyIPsend(config) {
+    RED.nodes.createNode(this, config);
+    var node = this;
+
+    this.server = RED.nodes.getNode(config.server);
+    config.offset = parseInt(config.offset);
+    config.size = parseInt(config.size);
+    config.localOffset = parseInt(config.localOffset);
+
+
+    if (this.server && this.server.service) {
+      debug('EasyIPsend - got a server and service');
+      this.on('input', function (msg) {
+        debug('EasyIPsend.on("input")', config, msg);
+
+
+        msg.addr = typeof config.addr === 'string' && config.addr.length > 0 ? config.addr : msg.addr;
+        msg.operand = typeof config.operand === 'string' && config.operand.length >=6 ?
+          config.operand : msg.operand;
+
+        msg.offset = hasIsNum(config.offset) ? config.offset : msg.offset;
+        msg.size = hasIsNum(config.size) ? config.size : msg.size;
+        msg.localOffset = hasIsNum(config.localOffset) ? config.localOffset : msg.localOffset;
+
+        debug('EasyIPsend- outgoing message', msg);
+        if(typeof msg.addr === 'string') {
+          msg.port = msg.port || easyip.EASYIP_PORT;
+          try {
+            this.server.service.doSend(msg.addr, msg.operand,
+              msg.offset, msg.size, msg.localOffset, function (err, packet) {
+                node.status({});
+                if (!err) {
+                  msg.payload = packet;
+                  node.send(msg);
+                }
+              });
+          }
+          catch(err) {
+            debug('error requesting', err);
+            node.log('error requesting', err);
+            node.status({fill: 'red', shape: 'ring'});
+          }
+        }
+        else {
+          debug('msg.addr is not a string', msg.addr);
+        }
+      });
+    }
+  }
+
+  RED.nodes.registerType('easyip-send', EasyIPsend);
+  debug('registered `easyip-send`');
+
 };
