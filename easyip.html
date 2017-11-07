@@ -1,7 +1,7 @@
 <script type="text/javascript">
-    RED.nodes.registerType('easyip in', {
+    RED.nodes.registerType('easyip-from', {
         category: 'function',
-        color: '#ffff00',
+        color: '#F3B567',
         inputs: 1,
         outputs: 1,
         icon: "arrow-in.png",
@@ -9,14 +9,14 @@
             name : {value: ''}
         },
         label: function () {
-            return this.name || 'easyip request';
+            return this.name || 'easyip from';
         },
-        paletteLabel: 'easyip request'
+        paletteLabel: 'easyip from'
     });
 </script>
 
 
-<script type="text/x-red" data-template-name="easyip in">
+<script type="text/x-red" data-template-name="easyip-from">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -24,7 +24,7 @@
 </script>
 
 
-<script type="text/x-red" data-help-name="easyip in">
+<script type="text/x-red" data-help-name="easyip-from">
    <p>Parses a buffer from for example a UDP node into a EasyIP Packet object instance</p>
    <p>If you are parsing a request from a real device you must provide a response as well
     otherwise it will cause a timeout error in the requesting device</p>
@@ -48,9 +48,9 @@
 
 
 <script type="text/javascript">
-    RED.nodes.registerType('easyip out', {
+    RED.nodes.registerType('easyip-to', {
         category: 'function',
-        color: '#ffff00',
+        color: '#F3B567',
         inputs: 1,
         outputs: 1,
         icon: "arrow-in.png",
@@ -59,14 +59,14 @@
             name : {value: ''}
         },
         label: function () {
-            return this.name || 'easyip response';
+            return this.name || 'easyip to';
         },
-        paletteLabel: 'easyip response'
+        paletteLabel: 'easyip to'
     });
 </script>
 
 
-<script type="text/x-red" data-template-name="easyip out">
+<script type="text/x-red" data-template-name="easyip-to">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -74,8 +74,331 @@
 </script>
 
 
-<script type="text/x-red" data-help-name="easyip out">
-   <p>Expects a EasyIP Packet instance as <b>msg.payload</b></p>
+<script type="text/x-red" data-help-name="easyip-to">
+   <p>Expects a EasyIP Packet instance as <b>msg.payload</b> and converts to buffer</p>
    <p>Outputs an object called <b>msg</b> containing <b>msg.topic</b> and
    <b>msg.payload</b>. msg.payload is a Buffer</p>
+</script>
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('easyip-server', {
+        category: 'config',
+        defaults: {
+            port: {value: 995, required: true, validate: RED.validators.number()}
+        },
+        label: function () {
+            return 'Port:' + this.port;
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="easyip-server">
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
+</script>
+
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('easyip-changed', {
+        category: 'input',
+        
+        color: '#F3B567',
+        outputs: 1,
+        icon: "trigger.png",
+        defaults: {
+            name : {value: ''},
+            filter: {value: ''},
+            server: {value: '', type: 'easyip-server'},
+        },
+        label: function () {
+            return this.name || 'easyip changed';
+        },
+        paletteLabel: 'easyip changed'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip-changed">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i>Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="icon-tag"></i> Filter</label>
+        <select id="node-input-filter">
+            <option value="">Optional operand filter</option>
+            <option value="FLAGWORD">FLAGWORD</option>
+            <option value="INPUTWORD">INPUTWORD</option>
+            <option value="OUTPUTWORD">OUTPUTWORD</option>
+            <option value="REGISTER">REGISTER</option>
+            <option value="STRING">STRING</option>
+        </select>
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip-changed">
+   <p>This gets triggered whenever a value in the virtual server device is changed.
+   You can filter on a specific operand if wanted.
+   </p>
+
+   <p>
+        <ul>
+            <li><code>msg.operand</code>A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload that was changed</li>
+            <li><code>msg.index</code>Integer indicating which value was changed</li>
+            <li><code>msg.previous</code>the old value before being changed</li>
+            <li><code>payload</code>the new value after the change</li>
+        </ul>
+   </p>
+   
+</script>
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('easyip-changed', {
+        category: 'input',
+        
+        color: '#F3B567',
+        outputs: 1,
+        icon: "trigger.png",
+        defaults: {
+            name : {value: ''},
+            filter: {value: ''},
+            server: {value: '', type: 'easyip-server'},
+        },
+        label: function () {
+            return this.name || 'easyip changed';
+        },
+        paletteLabel: 'easyip changed'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip-changed">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i>Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="icon-tag"></i> Filter</label>
+        <select id="node-input-filter">
+            <option value="">Optional operand filter</option>
+            <option value="FLAGWORD">FLAGWORD</option>
+            <option value="INPUTWORD">INPUTWORD</option>
+            <option value="OUTPUTWORD">OUTPUTWORD</option>
+            <option value="REGISTER">REGISTER</option>
+            <option value="STRING">STRING</option>
+        </select>
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip-changed">
+   <p>This gets triggered whenever a value in the virtual server device is changed.
+   You can filter on a specific operand if wanted.
+   </p>
+
+   <p>
+        <ul>
+            <li><code>msg.operand</code>A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload that was changed</li>
+            <li><code>msg.index</code>Integer indicating which value was changed</li>
+            <li><code>msg.previous</code>the old value before being changed</li>
+            <li><code>payload</code>the new value after the change</li>
+        </ul>
+   </p>
+   
+</script>
+
+
+
+<script type="text/javascript">
+    RED.nodes.registerType('easyip-update', {
+        category: 'output',
+        color: '#F3B567',
+        inputs: 1,
+        icon: "trigger.png",
+        align: 'right',
+        defaults: {
+            name : {value: ''},
+            server: {value: '', type: 'easyip-server'},
+            operand: {value: ''},
+            index: {value: '', validate: RED.validators.regex(/[0-9]*/)},
+            payload: {value: ''},
+        },
+        label: function () {
+            return this.name || 'easyip update';
+        },
+        paletteLabel: 'easyip update'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip-update">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i>Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-operand"><i class="icon-tag"></i> Operand</label>
+        <select id="node-input-operand">
+            <option value="">Optional operand</option>
+            <option value="FLAGWORD">FLAGWORD</option>
+            <option value="INPUTWORD">INPUTWORD</option>
+            <option value="OUTPUTWORD">OUTPUTWORD</option>
+            <option value="REGISTER">REGISTER</option>
+            <option value="STRING">STRING</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-index"><i class="icon-tag"></i> Index</label>
+        <input type="text" id="node-input-index" placeholder="Number">
+    </div>
+    <div class="form-row">
+        <label for="node-input-payload"><i class="icon-tag"></i> payload</label>
+        <input type="text" id="node-input-payload" placeholder="payload">
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip-update">
+   <p>Updates the local virtual server device with values from msg.</p>
+
+   <p>
+        <strong>Note:</strong> statically configured values have precedence.
+        <ul>
+            <li><code>msg.operand</code>A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload the request has</li>
+            <li><code>msg.index</code>Integer indicating which value to change</li>
+            <li><code>msg.payload</code>the new value</li>
+        </ul>
+   </p>
+   
+</script>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+    function numberIfExist(min) {
+        min = min || 0;
+        return function (v) {
+            if (v === null) {
+                return true;
+            }
+            if (typeof v === 'string') {
+                if (v.length === 0) return true;
+                v = parseInt(v);
+            }
+            
+            if(typeof v === 'number' && !isNaN(v)) {
+                if (v >= min) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    RED.nodes.registerType('easyip-request', {
+        category: 'function',
+        color: '#F3B567',
+        inputs: 1,
+        outputs: 1,
+        icon: "bridge.png",
+        align: 'right',
+        defaults: {
+            name : {value: ''},
+            server: {value: '', type: 'easyip-server'},
+            addr: {value: ''},
+            operand: {value: ''},
+            offset: {value: '', validate: numberIfExist()},
+            size: {value: '', validate: numberIfExist(1)},
+            localOffset: {value: '', validate:numberIfExist()}
+
+        },
+        label: function () {
+            return this.name || 'easyip request';
+        },
+        paletteLabel: 'easyip request'
+    });
+</script>
+
+
+<script type="text/x-red" data-template-name="easyip-request">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i>Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-addr"><i class="icon-tag"></i> Address</label>
+        <input type="text" id="node-input-addr" placeholder="IP Address">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-operand"><i class="icon-tag"></i> Operand</label>
+        <select id="node-input-operand">
+            <option value="">Optional operand</option>
+            <option value="FLAGWORD">FLAGWORD</option>
+            <option value="INPUTWORD">INPUTWORD</option>
+            <option value="OUTPUTWORD">OUTPUTWORD</option>
+            <option value="REGISTER">REGISTER</option>
+            <option value="STRING">STRING</option>
+        </select>
+        
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-offset"><i class="icon-tag"></i> Offset</label>
+        <input type="text" id="node-input-offset" placeholder="Number">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-size"><i class="icon-tag"></i> Size</label>
+        <input type="text" id="node-input-size" placeholder="Number">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-localOffset"><i class="icon-tag"></i> Local offset</label>
+        <input type="text" id="node-input-localOffset" placeholder="Number">
+    </div>
+</script>
+
+
+<script type="text/x-red" data-help-name="easyip-request">
+   <p>Sends a request for data to a remote device</p>
+   <p>
+       <strong>Note:</strong> statically configured values have precedence.
+
+       <ul>
+            <li><code>msg.addr</code>IP Address to the remote device</li>
+            <li><code>msg.operand</code>A string with either 'EMPTY', 'FLAGWORD', 'INPUTWORD', 'OUTPUTWORD', 'REGISTER' or 'STRING' describing the type of payload the request has</li>
+            <li><code>msg.offset</code>The offset on remote where to start</li>
+            <li><code>msg.size</code>Number of records to retreive</li>
+            <li><code>msg.localOffset</code>Local offset index</li>
+        </ul>
+   </p>
+   
 </script>

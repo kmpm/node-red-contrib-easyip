@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-easyip",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "node-red nodes for parsing and creating Festo EasyIP protocol packages",
   "keywords": ["node-red", "easyip", "fst", "festo"],
   "scripts": {
@@ -9,11 +9,8 @@
   "author": "Peter Magnusson <peter@birchroad.net>",
   "license": "Apache",
   "dependencies": {
-    "debug": "^2.2.0"
-  },
-  "devDependencies": {
-    "chai": "^3.2.0",
-    "mocha": "^2.2.5"
+    "debug": "^2.2.0",
+    "easyip": "^3.0.1"
   },
   "node-red": {
     "nodes": {
