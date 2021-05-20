@@ -258,6 +258,7 @@
             name : {value: ''},
             server: {value: '', type: 'easyip-server'},
             operand: {value: ''},
+            src: {value: 'msg'},
             index: {value: '', validate: RED.validators.regex(/[0-9]*/)},
             payload: {value: ''},
         },
@@ -294,8 +295,15 @@
         <input type="text" id="node-input-index" placeholder="Number">
     </div>
     <div class="form-row">
-        <label for="node-input-payload"><i class="icon-tag"></i> payload</label>
+        <label for="node-input-payload"><i class="icon-tag"></i> Payload</label>
         <input type="text" id="node-input-payload" placeholder="payload">
+    </div>
+    <div class="form-row">
+        <label for="node-input-src"><i class="icon-tag"></i> Payload Source</label>
+        <select id="node-input-src">
+            <option value="msg">msg</option>
+            <option value="prop">Properties</option>
+        </select>
     </div>
 </script>
 

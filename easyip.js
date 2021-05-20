@@ -117,11 +117,17 @@ module.exports = function (RED) {
         msg.operand = typeof config.operand === 'string' && config.operand.length >= 5 ? config.operand : msg.operand;
         msg.index = hasIsNum(config.index) ? config.index : msg.index;
 
-        msg.payload = typeof config.payload !== 'undefined' ? config.payload : msg.payload;
+        if (config.src !== 'msg') {
+          msg.payload = typeof config.payload !== 'undefined' ? config.payload : msg.payload;
+        }         
 
         debug('doing update  %s:%d, `%s`', msg.operand, msg.index, msg.payload);
+        
         if(typeof msg.operand === 'string' && typeof msg.index === 'number' && typeof msg.payload !== 'undefined') {
+          node.status({fill:"green",shape:"ring",text:"doing " + msg.operand + ", " + msg.index + ", " + msg.payload});
           this.server.service.storage.set(msg.operand, msg.index, msg.payload);
+        } else {
+          node.status({fill:"red",shape:"ring",text:"doing " + msg.operand + ", " + msg.index + ", " + msg.payload});
         }
       });
     }
