@@ -14,12 +14,15 @@
   "author": "Peter Magnusson <peter@birchroad.net>",
   "license": "Apache",
   "dependencies": {
-    "debug": "^2.2.0",
-    "easyip": "^3.0.1"
+    "debug": "^4.3.4",
+    "easyip": "^3.1.0"
   },
   "node-red": {
     "nodes": {
       "easyip": "easyip.js"
     }
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0"
   }
 }
